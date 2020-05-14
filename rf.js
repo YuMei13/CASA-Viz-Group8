@@ -1,14 +1,14 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoieXUtbWVpIiwiYSI6ImNrYTZrenNwejAweGYycG16aDA1OGY1YWgifQ.1M0GpuGVB67bphpajMQbjg';
 
-
+// set up map
 var map = new mapboxgl.Map({
     container: 'map', // container id
-    style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
+    style: 'mapbox://styles/mapbox/streets-v9', 
     center: [-0.13374,51.52455], // starting position [log, lat]
     zoom: 12 // starting zoom
     });
 
-
+// call direction API
 var direction= new MapboxDirections({
             accessToken: mapboxgl.accessToken,
             unit:'metric',
@@ -18,9 +18,11 @@ var direction= new MapboxDirections({
                 }
             });
 
+// add direction control
 map.addControl(direction ,'top-right');
 
 
+// add legend of cycle route
 var routenames=["Quietways", "Central London Grid", "Cycle Superhighways", "Mini-Hollands"];
 var colors = ["#44da69","#f31616","hsl(300, 100%, 50%)","hsl(319, 97%, 56%)"];
 var span = document.createElement('span');
@@ -37,7 +39,8 @@ for (var i=0; i<colors.length;i++){
                  '&#160;'+routenames[i]
         
     legend.appendChild(div);
-}
+};
+
 var divproposed = document.createElement('div');
 divproposed.innerHTML = '<span style="background:hsl(0, 1%, 65%);border-style:dashed">Proposed Route</span>';
 div.appendChild(divproposed);                
@@ -53,7 +56,7 @@ function getLocation(){
     
 };
 
-// call by getLocation, if it succeeds in get user's location, set user's location
+// call by getLocation, if it succeeds in getting user's location, then set user's location as orgin
 function success(pos) {
   var crd = pos.coords;
   var coor =[]
@@ -73,20 +76,20 @@ function error(err) {
 map.on('load', function () {
 
 
-    
+// add existed cycle Route layer   
 map.addLayer({
     id:'existedLayer',
     type: 'line',
     source: {
                 type: 'vector',
-                url: 'mapbox://yu-mei.6h68rgdn' // Your Mapbox tileset Map ID
+                url: 'mapbox://yu-mei.6h68rgdn' 
                     },
     'source-layer': 'Active_Travel_Zone_GIS_layers-bzc47o', // name of tilesets
     'layout': {
                 'visibility': 'visible'
                     },
      paint:{
-         'line-color':[
+         'line-color':[   // set different colors for different routes
       "match", ["string", ["get", "Type"]],
         "Quietways",
         "#44da69",
@@ -104,12 +107,13 @@ map.addLayer({
     filter:["==",'Status','Existing']
 });    
 
+// add proposed cycle route layer
 map.addLayer({
     id:'proposedLayer',
     type: 'line',
     source: {
                 type: 'vector',
-                url: 'mapbox://yu-mei.6h68rgdn' // Your Mapbox tileset Map ID
+                url: 'mapbox://yu-mei.6h68rgdn' 
                     },
     'source-layer': 'Active_Travel_Zone_GIS_layers-bzc47o', // name of tilesets
     'layout': {
@@ -125,15 +129,15 @@ map.addLayer({
     filter:["==",'Status','Proposed']
 }); 
 
-// create a popup variable
+// create a popup variable 
 var popup = new mapboxgl.Popup({
 closeButton: false,
 closeOnClick: false
 });
 
-//var hoveredStateId=null;    
     
-// when mouseover, show popup of the route name
+    
+// when mouseover of existed route layer, show popup of the route name
 map.on('mouseover', 'existedLayer', function(e) {
     
 map.getCanvas().style.cursor = 'pointer';
@@ -146,14 +150,14 @@ popup
 });
  
  
-// close popup when it leaves.
+// close popup of existed route layer when it leaves.
 map.on('mouseleave', 'existedLayer', function() {
 
 map.getCanvas().style.cursor = '';
 popup.remove();
 }); 
     
-    
+//when mouseover of proposed route layer, show popup of the route name   
 map.on('mouseover', 'proposedLayer', function(e) {
 
 map.getCanvas().style.cursor = 'pointer';
@@ -164,6 +168,8 @@ popup
 .addTo(map);
     
 });
+
+// close popup of proposed route layer when it leaves.
 map.on('mouseleave', 'proposedLayer', function() {
 
 map.getCanvas().style.cursor = '';
@@ -223,7 +229,7 @@ direction.on('route', function(e){
             
             var elevation = jonResponse.data;
             
-            // create dimple chart to show elevation profile
+            // call d3 chart to show elevation profile
             eleProfile(distance, elevation);
             
             //console.log(distance);
@@ -237,7 +243,7 @@ direction.on('route', function(e){
 
 });
     
-    
+// d3 chart main function   
 function eleProfile(distance, elevation){
     data = [];
     
@@ -253,17 +259,10 @@ function eleProfile(distance, elevation){
     var svg = d3.select('#chartContainer')
                 .style("background-color", "#f7fafa");
      
-    //var title = document.getElementById("charttitle").innerHTML="Elevation Profile"
-
     
-    
-        //Remove any previously generated chart content.
+    //Remove any previously generated chart content.
     svg.selectAll('*').remove();
-//    var svg = dimple.newSvg("#chartContainer", 440, 380);
-//    var myChart = new dimple.chart(svg, data);
-    //myChart.setBounds(380,20,300,380);
-    //var x=myChart.addCategoryAxis("x", "Distance");
-    //Create the x and y ranges.
+
     var width = svg.attr('width');
         var height = svg.attr('height');
     var margins = {
@@ -273,33 +272,33 @@ function eleProfile(distance, elevation){
             left: 50
         };
     
-        var xRange = d3.scaleLinear().range([margins.left, width - margins.right])
+    var xRange = d3.scaleLinear().range([margins.left, width - margins.right])
             .domain([d3.min(data, function (d) {
                 return d.x;
             }), d3.max(data, function (d) {
                 return d.x;
             })]);
 
-        var yRange = d3.scaleLinear().range([height - margins.top, margins.bottom])
+    var yRange = d3.scaleLinear().range([height - margins.top, margins.bottom])
             .domain([d3.min(data, function (d) {
                 return d.y;
             }), d3.max(data, function (d) {
                 return d.y;
             })]);
 
-        //Create the x-axis.
-        svg.append('g')
+    //Create the x-axis.
+    svg.append('g')
             .attr('transform', 'translate(0,' + (height - margins.bottom) + ')')
             .call(d3.axisBottom(xRange));
 
-        svg.append('text')
+    svg.append('text')
             .attr('x', width/2)
             .attr('y', height-10)
             .style('text-anchor', 'middle')
             .text('Distance (m)');
 
-        //Create the y-axis.
-        svg.append('g')
+    //Create the y-axis.
+    svg.append('g')
             .attr('transform', 'translate(' + (margins.left) + ',0)')
             .call(d3.axisLeft(yRange));
 
@@ -321,7 +320,7 @@ function eleProfile(distance, elevation){
             .attr('fill', 'none');
     
    
-    var focus = svg.append("g")                                // **********
+    var focus = svg.append("g")                                
     .style("display", "none");
     
     
@@ -349,11 +348,11 @@ function eleProfile(distance, elevation){
         .attr("x2", width);
     
     // append circle
-    focus.append("circle")                                 // **********
-        .attr("class", "y")                                // **********
-        .style("fill", "none")                             // **********
-        .style("stroke", "blue")                           // **********
-        .attr("r", 4);                                     // **********
+    focus.append("circle")                                 
+        .attr("class", "y")                                
+        .style("fill", "none")                             
+        .style("stroke", "blue")                           
+        .attr("r", 4);                                     
     
     
     // append value at intersection
@@ -383,28 +382,28 @@ function eleProfile(distance, elevation){
         .attr("dy", "1em");
     
     
-    // append the rectangle to capture mouse               // **********
-    svg.append("rect")                                     // **********
-        .attr("width", width)                              // **********
-        .attr("height", height)                            // **********
-        .style("fill", "none")                             // **********
-        .style("pointer-events", "all")                    // **********
+    // append the rectangle to capture mouse               
+    svg.append("rect")                                     
+        .attr("width", width)                              
+        .attr("height", height)                            
+        .style("fill", "none")                             
+        .style("pointer-events", "all")                    
         .on("mouseover", function() { focus.style("display", null); })
         .on("mouseout", function() { focus.style("display", "none"); })
-        .on("mousemove", mousemove);                       // **********
+        .on("mousemove", mousemove);                       
 
      var bisectx = d3.bisector(function(d) { return d.x; }).left; 
     
-    function mousemove() {                                 // **********
-        var x0 = xRange.invert(d3.mouse(this)[0]),              // **********
-            i = bisectx(data, x0, 1),                   // **********
-            d0 = data[i - 1],                              // **********
-            d1 = data[i],                                  // **********
-            d = x0 - d0.x > d1.x - x0 ? d1 : d0;     // **********
+    function mousemove() {                                 
+        var x0 = xRange.invert(d3.mouse(this)[0]),              
+            i = bisectx(data, x0, 1),                   
+            d0 = data[i - 1],                              
+            d1 = data[i],                                  
+            d = x0 - d0.x > d1.x - x0 ? d1 : d0;     
 
-        focus.select("circle.y")                           // **********
-            .attr("transform",                             // **********
-                  "translate(" + xRange(d.x) + "," +         // **********
+        focus.select("circle.y")                           
+            .attr("transform",                             
+                  "translate(" + xRange(d.x) + "," +         
                                  yRange(d.y) + ")");
         
         
