@@ -204,8 +204,8 @@ reqbike.onload  = function() {
         markers.className = 'markers in';
         //markers.id = 'marker';
         markers.style.content="url('point.png')";
-        markers.style.width = 12+"px";
-        markers.style.height = 15+"px";
+        markers.style.width = 15+"px";
+        markers.style.height = 18+"px";
 
         var markerPopup= new mapboxgl.Marker(markers)
         .setLngLat(marker.coords)
