@@ -23,8 +23,11 @@
             .btn.collapsed:after {content: "\e080";}
             .nvi{position: absolute; left:0; top:0px; z-index: 9;background-color: lightblue;color:darkgrey;font-size:20px}
             .nvi:hover {background-color: skyblue;}
-            #legend {position: absolute;background-color: #FFFF; right:0;bottom:5px;padding: 10px;box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);line-height: 18px;height: 130px;margin-bottom: 21px;width: 145px;border: 2px solid lightgrey}
+            #legend {position: absolute;background-color: #FFFF; right:0;bottom:5px;padding: 10px;box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);line-height: 18px;height: 130px;margin-bottom: 21px;width: 145px;border: 2px solid lightgrey;opacity: 0.8;}
             .legendName{font-size: 16px;margin-left: 20px;}
+            .btn1 {position: absolute;right:150px; bottom:30px; z-index: 9;border: 2px solid grey;padding: 10px;
+  border-radius: 25px;}
+            .btn1:hover{background-color: deepskyblue;}
         </style>
            
         
@@ -40,13 +43,17 @@
         
         <div id="map"></div>
         <div class='map-overlay' id='legend'></div>
+        
         <button type="button" class="nvi" id='loc' onclick="getLocation()"><span class="glyphicon glyphicon-map-marker" aria-hidden="true" ></span></button>
+        <button type="button" class="btn1 btn-primary" data-toggle="collapse" data-target=.markers>Show/Off Bike Points</button>
+        
         <button type="button" class="btn btn-sm btn-info collapsed" data-toggle="collapse" data-target="#chartContainer"></button>
-        <svg id="chartContainer" width="600" height="250">
+        <svg id="chartContainer" class="chart in" width="600" height="250">
             
             <div id="charttitle"> </div>
             <div id ="calories"></div>
         </svg>
+        <script src='config.js'></script>
         <script src="rf.js"></script>
     
     
